@@ -1,0 +1,26 @@
+version: '3.4'
+
+services:
+  productsdb:
+    container_name: productsdb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - "mongo_data:/data/db"
+ 
+
+
+  products.api:
+    container_name: products.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "DatabaseSettings:ConnectionString=mongodb://productsdb:27017" 
+      - ASPNETCORE_HTTP_PORTS=8080
+    ports:
+      - "4000:8080"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+    depends_on:
+      - productsdb
